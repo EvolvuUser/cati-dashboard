@@ -1,0 +1,45 @@
+1. Valid Request (Happy Flow)
+curl -X POST http://127.0.0.1:8000/api/v1/mobile-calls \
+-H "Content-Type: application/json" \
+-d '{
+    "db_no": "DB1001",
+    "campaign_id": "CMP001",
+    "call_date": "2026-05-26",
+    "start_epoch": 1779789000,
+    "end_epoch": 1779789300,
+    "user": "john.doe",
+    "status_name": "Completed"
+}'
+
+2. Valid Request Without end_epoch
+curl -X POST http://127.0.0.1:8000/api/v1/mobile-calls \
+-H "Content-Type: application/json" \
+-d '{
+    "db_no": "DB1002",
+    "campaign_id": "CMP001",
+    "call_date": "2026-05-26",
+    "start_epoch": 1779789000,
+    "user": "john.doe",
+    "status_name": "Completed"
+}'
+
+
+3. Duplicate db_no
+curl -X POST http://127.0.0.1:8000/api/v1/mobile-calls \
+-H "Content-Type: application/json" \
+-d '{
+    "db_no": "DB1001",
+    "campaign_id": "CMP001",
+    "call_date": "2026-05-26",
+    "start_epoch": 1779789000,
+    "user": "john.doe",
+    "status_name": "Completed"
+}'
+
+
+4. Missing Required Fields
+curl -X POST http://127.0.0.1:8000/api/v1/mobile-calls \
+-H "Content-Type: application/json" \
+-d '{}'
+
+
