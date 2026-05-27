@@ -34,6 +34,9 @@ class ReportController extends Controller
                     ->orWhere('pi.client_name',          'like', '%' . $filters['search'] . '%');
                 }));
 
+        $centerMap = DB::table('tbl_cati_centers')
+         ->pluck('cati_center_name', 'cati_center_id');
+
         $calls = $baseQuery()
             ->select(
                 'mc.*',
@@ -48,20 +51,28 @@ class ReportController extends Controller
                 'pi.cati_centers',
                 'tcn.client_title as tcn_client_name',
                 'tci.client_industry_name as tci_client_industry_name',
-                DB::raw("
-                    (
-                        SELECT GROUP_CONCAT(DISTINCT tcc.cati_center_name SEPARATOR ', ')
-                        FROM tbl_cati_centers tcc
-                        WHERE JSON_CONTAINS(
-                            pi.cati_centers,
-                            CONCAT('\"', tcc.cati_center_id, '\"')
-                        )
-                    ) as cati_center_names
-                "),
             )
             ->orderByDesc('mc.call_date')
             ->paginate(50)
             ->withQueryString();
+
+        $calls->getCollection()->transform(function ($call) use ($centerMap) {
+            $centerIds = [];
+
+            if (!empty($call->cati_centers)) {
+                $decoded = json_decode($call->cati_centers, true);
+
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    $centerIds = $decoded;
+                }
+            }
+            
+            $call->cati_center_names = collect($centerIds)
+                ->map(fn($id) => $centerMap[$id] ?? null)
+                ->filter()
+                ->implode(', ');
+            return $call;
+        });
 
        $campaigns = DB::table('mobile_calls as mc')
         ->leftJoin('project_information as pi', function($join) {
