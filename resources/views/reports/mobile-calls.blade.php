@@ -136,14 +136,6 @@
       <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="DB No / User / Campaign / Client">
     </label>
     <hr>
-    <label>Campaign
-      <select name="campaign_id">
-        <option value="">All Campaigns</option>
-        @foreach($campaigns as $c)
-          <option value="{{ $c }}" @selected(($filters['campaign_id'] ?? '') === $c)>{{ $c }}</option>
-        @endforeach
-      </select>
-    </label>
     <label>User
       <select name="user">
         <option value="">All Users</option>
@@ -195,27 +187,20 @@
         <thead>
           {{-- Group header row --}}
           <tr>
-            <th colspan="9">Call Data</th>
-            <th colspan="6" class="th-group">Project Information</th>
+            <th colspan="10">Call Data</th>
           </tr>
           {{-- Column header row --}}
           <tr>
             {{-- Call columns --}}
             <th>#</th>
             <th>DB No</th>
+            <th>Campaign</th>
             <th>Date</th>
             <th>User</th>
             <th>Status</th>
             <th>Start</th>
             <th>End</th>
             <th>Duration</th>
-            {{-- Project columns --}}
-            <th class="grp-pi">Job Name</th>
-            <th>Job No</th>
-            <th>Client</th>
-            <th>Industry</th>
-            <th>Type</th>
-            <th class="grp-pi-end">Centers</th>
           </tr>
         </thead>
         <tbody>
@@ -235,32 +220,13 @@
           <tr>
             <td style="color:#aaa">{{ $calls->firstItem() + $i }}</td>
             <td><code style="font-size:11px">{{ $call->db_no }}</code></td>
+            <td><code style="font-size:11px">{{ $call->campaign_id  }}</code></td>
             <td>{{ \Carbon\Carbon::parse($call->call_date)->format('d M Y') }}</td>
             <td>{{ $call->user }}</td>
             <td><span class="badge {{ $badgeClass }}">{{ $call->status_name }}</span></td>
             <td style="color:#666">{{ date('H:i:s', $call->start_epoch) }}</td>
             <td style="color:#666">{{ date('H:i:s', $call->end_epoch) }}</td>
             <td style="font-variant-numeric:tabular-nums">{{ $durStr }}</td>
-            <td class="grp-pi">{!! $call->job_name_by_research ?? $nil !!}</td>
-            <td>{!! $call->job_number ?? $nil !!}</td>
-            <td>
-              @if($call->client_name)
-                <span title="{{ $call->client_name }}">
-                  {{ \Illuminate\Support\Str::limit($call->tcn_client_name, 22) }}
-                </span>
-              @else
-                {!! $nil !!}
-              @endif
-            </td>
-            <td>{!! $call->tci_client_industry_name ?? $nil !!}</td>
-            <td>
-              @if($call->type_of_calling)
-                <span class="badge badge-default">{{ $call->type_of_calling }}</span>
-              @else
-                {!! $nil !!}
-              @endif
-            </td>
-            <td class="grp-pi-end">{!! $call->cati_center_names ?? $nil !!}</td>
           </tr>
           @empty
           <tr><td colspan="15" class="empty">No records found.</td></tr>

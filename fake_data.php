@@ -3,8 +3,8 @@
 $apiUrl = "http://127.0.0.1:8000/api/v1/mobile-calls";
 $apiKey = "mysecretkey123";
 
-// Number of fake records
-$totalRecords = 10;
+// Number of 1 records
+$totalRecords = 1;
 
 $statuses = [
     "Completed",
