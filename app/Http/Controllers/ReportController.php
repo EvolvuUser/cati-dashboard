@@ -13,13 +13,13 @@ class ReportController extends Controller
 
         $baseQuery = fn() => DB::table('mobile_calls as mc')
                 ->leftJoin('project_information as pi', function($join) {
-                    $join->whereRaw('pi.name_by_cati_team COLLATE utf8mb4_unicode_ci = mc.campaign_id');
+                    $join->on(DB::raw('pi.name_by_cati_team COLLATE utf8mb4_unicode_ci'), '=', DB::raw('mc.campaign_id'));
                 })
                 ->leftJoin('tbl_client_names as tcn', function($join) {
-                    $join->whereRaw('tcn.client_id COLLATE utf8mb4_unicode_ci = pi.client_name');
+                    $join->on(DB::raw('tcn.client_id COLLATE utf8mb4_unicode_ci'), '=', DB::raw('pi.client_name'));
                 })
                 ->leftJoin('tbl_client_industries as tci', function($join) {
-                    $join->whereRaw('tci.client_industry_id COLLATE utf8mb4_unicode_ci = pi.client_industry');
+                    $join->on(DB::raw('tci.client_industry_id COLLATE utf8mb4_unicode_ci'), '=', DB::raw('pi.client_industry'));
                 })
                 ->when(!empty($filters['campaign_id']), fn($q) => $q->where('tcn.client_title', $filters['campaign_id']))
                 ->when(!empty($filters['user']),        fn($q) => $q->where('mc.user', $filters['user']))
@@ -66,7 +66,7 @@ class ReportController extends Controller
                     $centerIds = $decoded;
                 }
             }
-            
+
             $call->cati_center_names = collect($centerIds)
                 ->map(fn($id) => $centerMap[$id] ?? null)
                 ->filter()
