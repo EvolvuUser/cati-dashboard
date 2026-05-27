@@ -1,6 +1,7 @@
 1. Valid Request (Happy Flow)
 curl -X POST http://127.0.0.1:8000/api/v1/mobile-calls \
 -H "Content-Type: application/json" \
+-H "X-CATI-KEY: mysecretkey123" \
 -d '{
     "db_no": "DB1001",
     "campaign_id": "CMP001",
@@ -14,6 +15,7 @@ curl -X POST http://127.0.0.1:8000/api/v1/mobile-calls \
 2. Valid Request Without end_epoch
 curl -X POST http://127.0.0.1:8000/api/v1/mobile-calls \
 -H "Content-Type: application/json" \
+-H "X-CATI-KEY: mysecretkey123" \
 -d '{
     "db_no": "DB1002",
     "campaign_id": "CMP001",
@@ -26,6 +28,7 @@ curl -X POST http://127.0.0.1:8000/api/v1/mobile-calls \
 
 3. Duplicate db_no
 curl -X POST http://127.0.0.1:8000/api/v1/mobile-calls \
+-H "X-CATI-KEY: mysecretkey123" \
 -H "Content-Type: application/json" \
 -d '{
     "db_no": "DB1001",
@@ -39,6 +42,7 @@ curl -X POST http://127.0.0.1:8000/api/v1/mobile-calls \
 
 4. Missing Required Fields
 curl -X POST http://127.0.0.1:8000/api/v1/mobile-calls \
+-H "X-CATI-KEY: mysecretkey123" \
 -H "Content-Type: application/json" \
 -d '{}'
 
