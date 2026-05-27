@@ -15,13 +15,13 @@ This API requires an API key in the request header.
 ## Required Header
 
 ```http
-X-BRODERSEN-KEY: your_api_key
+X-CATI-KEY: your_api_key
 ```
 
 Example:
 
 ```http
-X-BRODERSEN-KEY: mysecretkey123
+X-CATI-KEY: mysecretkey123
 ```
 
 ---
@@ -62,7 +62,7 @@ If `end_epoch` is not provided, current server timestamp will be used automatica
 ```bash
 curl -X POST http://your-domain.com/api/v1/mobile-calls \
   -H "Content-Type: application/json" \
-  -H "X-BRODERSEN-KEY: mysecretkey123" \
+  -H "X-CATI-KEY: mysecretkey123" \
   -d '{
     "db_no": "DB1001",
     "campaign_id": "CMP001",
@@ -200,3 +200,4 @@ end_epoch - start_epoch
 ```
 
 - If `end_epoch` is smaller than `start_epoch`, API will return validation error.
+
