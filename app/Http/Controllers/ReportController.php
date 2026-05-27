@@ -21,14 +21,6 @@ class ReportController extends Controller
                 ->leftJoin('tbl_client_industries as tci', function($join) {
                     $join->whereRaw('tci.client_industry_id COLLATE utf8mb4_unicode_ci = pi.client_industry');
                 })
-                ->leftJoin('tbl_cati_centers as tcc', function($join) {
-                    $join->whereRaw("
-                        JSON_CONTAINS(
-                            pi.cati_centers,
-                            CONCAT('\"', tcc.cati_center_id, '\"')
-                        )
-                    ");
-                })
                 ->when(!empty($filters['campaign_id']), fn($q) => $q->where('tcn.client_title', $filters['campaign_id']))
                 ->when(!empty($filters['user']),        fn($q) => $q->where('mc.user', $filters['user']))
                 ->when(!empty($filters['status_name']), fn($q) => $q->where('mc.status_name', $filters['status_name']))
@@ -57,25 +49,15 @@ class ReportController extends Controller
                 'tcn.client_title as tcn_client_name',
                 'tci.client_industry_name as tci_client_industry_name',
                 DB::raw("
-                    GROUP_CONCAT(
-                        DISTINCT tcc.cati_center_name
-                        SEPARATOR ', '
+                    (
+                        SELECT GROUP_CONCAT(DISTINCT tcc.cati_center_name SEPARATOR ', ')
+                        FROM tbl_cati_centers tcc
+                        WHERE JSON_CONTAINS(
+                            pi.cati_centers,
+                            CONCAT('\"', tcc.cati_center_id, '\"')
+                        )
                     ) as cati_center_names
                 "),
-            )
-            ->groupBy(
-                'mc.id',
-                'pi.job_name_by_research',
-                'pi.job_number',
-                'pi.client_name',
-                'pi.client_type',
-                'pi.type_of_calling',
-                'pi.client_industry',
-                'pi.calling_methodology',
-                'pi.languages',
-                'pi.cati_centers',
-                'tcn.client_title',
-                'tci.client_industry_name'
             )
             ->orderByDesc('mc.call_date')
             ->paginate(50)
